@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday My Love</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #0a0a0a; --accent: #ffd700; }
+        body { margin: 0; background: var(--bg); color: #fff; font-family: 'Montserrat', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        
+        /* Cấu trúc màn hình */
+        .screen { display: none; flex-direction: column; align-items: center; width: 90%; text-align: center; }
+        .active { display: flex; }
+
+        /* Màn hình mật khẩu */
+        input { background: transparent; border: 1px solid #444; color: white; padding: 15px; border-radius: 30px; width: 200px; text-align: center; font-size: 1.2rem; }
+        
+        /* Hiệu ứng nến */
+        .cake { font-size: 80px; margin-bottom: 20px; transition: transform 0.5s; }
+        .flame { color: #ff4500; font-size: 40px; filter: drop-shadow(0 0 10px #ff4500); animation: flicker 0.3s infinite alternate; }
+        @keyframes flicker { 0% { opacity: 0.8; transform: scale(1); } 100% { opacity: 1; transform: scale(1.1); } }
+        
+        /* Bức thư */
+        #letter { display: none; background: #fff; color: #333; padding: 30px; border-radius: 15px; width: 80%; max-width: 400px; box-shadow: 0 10px 30px rgba(255,255,255,0.2); transform: scale(0); transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        #letter.show { display: block; transform: scale(1); }
+        h1 { font-family: 'Dancing Script', cursive; color: #d4af37; }
+
+        button { background: var(--accent); border: none; padding: 15px 30px; border-radius: 30px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        .hidden { display: none; }
+
+        .screen3__banner img {width: 100%; height: 100%; object-fit: contain;}
+    </style>
+</head>
+<body>
+
+    <!-- Màn hình 1: Mật khẩu -->
+    <div id="screen1" class="screen active">
+        <h2>Nhập mật khẩu của em đi ✨</h2>
+        <input type="password" id="pass" maxlength="4" placeholder="••••">
+        <p id="error" style="color:red; margin-top:10px;"></p>
+    </div>
+
+    <!-- Màn hình 2: Thổi nến -->
+    <div id="screen2" class="screen">
+        <div class="cake" id="cake" style="display: flex; flex-direction: column-reverse;">🎂<br><span class="flame" id="flame">🔥</span></div>
+        <p>Thổi nhẹ dô micro để tắt nến nha bồ iuuu </p>
+        <button onclick="startAudio()">Sẵn sàng !!!</button>
+    </div>
+
+    <!-- Màn hình 3: Bức thư -->
+    <div id="screen3" class="screen">
+        <div id="letter">
+            <h1>Gửi tình yêu của anh</h1>
+            <p>Ta đa!! 🎉🎉🎉<br><br>
+                Chúc mừng sinh nhật em bé của anhh. Chúc em bé của anh lun xinh đẹp, dui dẻ, ăn được, ngủ ngoan, ỉa giỏi và lúc nào cũng nhiều năng lượng để còn lì với anh iu nhó. Đặc biệt nay em bé lớn hơn 1 chủi roài thì phải thương anh nhìu hơn 1 đống luôn nhaaa. Anh mong tụi mình năm nào cũng được bên nhauu như hiện tại và cho em đọc mấy câu văn của QM rặn ra như này nhaaa hé hé. Happy birth day cục dàng. Đọc tới ây roài hun nhau mín hoy.😘😘😘
+            </p>
+
+            <div class="screen3__banner">
+                <img src="./assets/mint-hpbd.png" alt="Mint HPBD">
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Mật khẩu
+    document.getElementById('pass').addEventListener('input', (e) => {
+        if(e.target.value === '6666') {
+            document.getElementById('screen1').classList.remove('active');
+            document.getElementById('screen2').classList.add('active');
+        }
+    });
+
+    // Cấu hình âm thanh
+    const bgMusic = new Audio('assets/hpbd-audio.mp3');
+    bgMusic.loop = true;
+
+    async function startAudio() {
+        try {
+            // 1. Xin quyền dùng micro
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            
+            // 2. Phát nhạc
+            bgMusic.play();
+            
+            // 3. Khởi tạo phân tích âm thanh để thổi nến
+            const ctx = new AudioContext();
+            const analyser = ctx.createAnalyser();
+            ctx.createMediaStreamSource(stream).connect(analyser);
+            analyser.fftSize = 256;
+            const buffer = new Uint8Array(analyser.frequencyBinCount);
+
+            function checkBlow() {
+                analyser.getByteFrequencyData(buffer);
+                let sum = 0;
+                for(let i=0; i<buffer.length; i++) sum += buffer[i];
+                
+                if (sum/buffer.length > 50) { 
+                    document.getElementById('flame').style.display = 'none';
+                    setTimeout(showLetter, 500);
+                } else {
+                    requestAnimationFrame(checkBlow);
+                }
+            }
+            checkBlow();
+            
+            // Ẩn nút bắt đầu sau khi đã bấm
+            event.target.style.display = 'none';
+        } catch(e) { 
+            alert("Cho anh mượn cái micro trên điện thoại xíu nhoooo");
+        }
+    }
+
+    function showLetter() {
+        document.getElementById('screen2').classList.remove('active');
+        document.getElementById('screen3').classList.add('active');
+        setTimeout(() => { document.getElementById('letter').classList.add('show'); }, 100);
+    }
+</script>
+</body>
+</html>
