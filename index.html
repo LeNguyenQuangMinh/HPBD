@@ -22,7 +22,7 @@
         @keyframes flicker { 0% { opacity: 0.8; transform: scale(1); } 100% { opacity: 1; transform: scale(1.1); } }
         
         /* Bức thư */
-        #letter { display: none; background: #fff; color: #333; padding: 30px; border-radius: 15px; width: 80%; max-width: 400px; box-shadow: 0 10px 30px rgba(255,255,255,0.2); transform: scale(0); transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        #letter { display: none; background: #fff; color: #333; padding: 30px; border-radius: 15px; width: 80%; max-width: 400px; box-shadow: 0 10px 30px rgba(255,255,255,0.2); transform: scale(0); transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 80dvh; overflow: auto;}
         #letter.show { display: block; transform: scale(1); }
         h1 { font-family: 'Dancing Script', cursive; color: #d4af37; }
 
